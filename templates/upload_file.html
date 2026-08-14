@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card fortress-card p-4">
+            <h4>Caricamento Sicuro</h4>
+            <p class="text-muted">Il file verrà criptato in AES-256 prima del salvataggio.</p>
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="mb-3">
+                    <label class="form-label">Codice Fiscale (Criptato)</label>
+                    {{ form.codice_fiscale }}
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Seleziona Documento</label>
+                    {{ form.file_documento }}
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Limite Download</label>
+                    {{ form.limite_download }}
+                </div>
+                <button type="submit" class="btn btn-success w-100">Invia e Proteggi</button>
+            </form>
+            <a href="{% url 'lista_documenti' %}" class="btn btn-link w-100 mt-2">Torna alla lista</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

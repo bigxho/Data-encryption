@@ -1,0 +1,173 @@
+{% extends 'base.html' %}
+
+{% block title %}I tuoi Documenti Protetti{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2><span class="text-primary">🛡️</span> Cassaforte Documenti</h2>
+            <a href="{% url 'upload_documento' %}" class="btn btn-success shadow-sm">
+                <i class="bi bi-cloud-upload"></i> + Carica Nuovo File
+            </a>
+        </div>
+
+        <div class="card fortress-card border-0 shadow">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Nome Documento</th>
+                            <th>Data Caricamento</th>
+                            <th class="text-center">Integrità</th>
+                            <th class="text-center">Download Rimanenti</th>
+                            <th class="text-end">Azioni</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for doc in documenti %}
+                        <tr>
+                            <td>
+                                <strong>{{ doc.file_documento.name|cut:"docs/" }}</strong>
+                                <br><small class="text-muted">ID: {{ doc.id }}</small>
+                            </td>
+                            <td>{{ doc.caricato_il|date:"d/m/Y H:i" }}</td>
+                            <td class="text-center">
+                                <span class="badge bg-info-subtle text-info border border-info">
+                                    AES-256 Checked
+                                </span>
+                            </td>
+                            <td>
+                                <div id="cf-container-{{ doc.id }}">
+                                    <button class="btn btn-sm btn-outline-secondary" 
+                                            onclick="svelaCF('{{ doc.id }}')">
+                                        👁️ Mostra CF
+                                    </button>
+                                </div>
+                            </td>
+
+                            <td class="text-center">
+                                {% if doc.download_rimanenti == 0 %}
+                                    <span class="badge bg-danger shadow-sm text-uppercase" style="font-size: 0.7rem;">Bloccato</span>
+                                {% elif doc.download_rimanenti <= 2 %}
+                                    <span class="badge bg-warning text-dark shadow-sm">{{ doc.download_rimanenti }} Rimasti</span>
+                                {% else %}
+                                    <span class="badge bg-success shadow-sm">{{ doc.download_rimanenti }} Disponibili</span>
+                                {% endif %}
+
+                                    <div class="progress mt-2" style="height: 8px; width: 100px; margin: 0 auto; background-color: #e9ecef; border-radius: 10px;">
+                                        <div class="progress-bar progress-bar-striped progress-bar-animated" 
+                                            role="progressbar"
+                                            data-value="{{ doc.percentuale_consumata|default:0 }}"
+                                            style="width: 0%; border-radius: 10px;">
+                                        </div>
+                                    </div>                                        
+                            </td>                            
+                                
+                                <td class="text-end">
+                                {% if doc.download_effettuati < doc.limite_download %}
+                                    <a href="{% url 'download_sicuro' doc.id %}" 
+                                    class="btn btn-primary btn-sm shadow-sm" 
+                                    onclick="refreshDopoDownload()">⬇️ Scarica</a>
+                                {% else %}
+                                    <button class="btn btn-secondary btn-sm" disabled>🔒 Bloccato</button>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="5" class="text-center py-5 text-muted">
+                                <p class="mb-0">Non ci sono ancora file nella tua cassaforte.</p>
+                                <small>Inizia caricando il tuo primo documento criptato.</small>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function svelaCF(docId) {
+    const container = document.getElementById(`cf-container-${docId}`);
+    const originalContent = container.innerHTML;
+    
+    // Feedback visivo di caricamento
+    container.innerHTML = '<span class="spinner-border spinner-border-sm text-primary"></span>';
+
+    fetch(`/decripta-cf/${docId}/`)
+        .then(response => {
+            if (!response.ok) throw new Error('Accesso negato');
+            return response.text();
+        })
+        .then(text => {
+            // Mostriamo il CF con un tasto per nasconderlo di nuovo
+            container.innerHTML = `
+                <code class="fw-bold text-primary">${text}</code>
+                <button class="btn btn-sm btn-link p-0 ms-2" onclick="nascondiCF(${docId}, '${text}')">
+                    <small>Nascondi</small>
+                </button>
+            `;
+        })
+        .catch(err => {
+            container.innerHTML = '<span class="text-danger small">Errore</span>';
+            setTimeout(() => { container.innerHTML = originalContent; }, 2000);
+        });
+}
+
+function nascondiCF(docId, text) {
+    const container = document.getElementById(`cf-container-${docId}`);
+    container.innerHTML = `
+        <button class="btn btn-sm btn-outline-secondary" onclick="svelaCF(${docId})">
+            👁️ Mostra CF
+        </button>
+    `;
+}
+</script>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        // Cerca tutte le progress-bar e applica la larghezza correttamente
+        const bars = document.querySelectorAll('.progress-bar');
+        bars.forEach(bar => {
+            const val = bar.getAttribute('data-value');
+            bar.style.width = val + "%";
+            
+            // Cambia colore in base alla percentuale
+            if (val >= 100) {
+                bar.classList.add('bg-danger');
+            } else if (val >= 80) {
+                bar.classList.add('bg-warning');
+            } else {
+                bar.classList.add('bg-primary');
+            }
+        });
+    });
+</script>
+
+<script>
+    setInterval(function() {
+        if (!document.hidden) {
+            console.log("Fortezza: Aggiornamento dati in corso...");
+            location.reload();
+        }
+    }, 60000); // Ogni 60 secondi
+</script>
+
+<script>
+function refreshDopoDownload() {
+    // Aspettiamo 1 secondo (1000ms) per dare tempo al database di salvare 
+    // l'incremento del download prima che la pagina si ricarichi.
+    setTimeout(function() {
+        location.reload();
+    }, 1000);
+}</script>
+
+<style>
+    /* Stile per la tabella e badge */
+    .fortress-card { border-radius: 12px; overflow: hidden; }
+    .table thead th { font-weight: 600; text-transform: uppercase; font-size: 0.75rem; letter-spacing: 0.5px; }
+    .badge { font-weight: 500; }
+</style>
+{% endblock %}

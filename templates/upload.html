@@ -1,0 +1,7 @@
+<h2>Carica Documento Sensibile</h2>
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Carica in modo sicuro 🔒</button>
+</form>
+<a href="{% url 'lista_documenti' %}">Torna alla lista</a>

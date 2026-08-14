@@ -1,0 +1,31 @@
+<h2>I tuoi documenti protetti</h2>
+<table border="1">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Caricato il</th>
+            <th>Download rimasti</th>
+            <th>Azioni</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for doc in documenti %}
+        <tr>
+            <td>{{ doc.id }}</td>
+            <td>{{ doc.caricato_il|date:"d/m/Y H:i" }}</td>
+            <td>{{ doc.download_effettuati }} / {{ doc.limite_massimo_download }}</td>
+            <td>
+                {% if not doc.e_scaduto and not doc.ha_raggiunto_il_limite %}
+                    <a href="{% url 'download_sicuro' doc.id %}">Scarica ora ⬇️</a>
+                {% else %}
+                    <span style="color: red;">Non disponibile</span>
+                {% endif %}
+            </td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="4">Nessun documento caricato.</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
+<br>
+<a href="{% url 'upload_documento' %}">Carica nuovo</a>

@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="row justify-content-center mt-5">
+    <div class="col-md-6 text-center">
+        <div class="alert alert-danger p-5 shadow">
+            <h1 class="display-1">🔒</h1>
+            <h2 class="mt-4">Accesso Temporaneamente Bloccato</h2>
+            <p class="lead">Per motivi di sicurezza, troppi tentativi falliti hanno attivato la protezione della Fortezza.</p>
+            <hr>
+            <p>Riprova tra <strong>60 minuti</strong> o contatta l'amministratore di sistema se ritieni si tratti di un errore.</p>
+        </div>
+        <a href="{% url 'login' %}" class="btn btn-outline-secondary">Torna al Login</a>
+    </div>
+</div>
+{% endblock %}
