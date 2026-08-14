@@ -1,0 +1,23 @@
+services:
+  my-app:
+    # Sostituisci con la tua immagine o usa 'build: .' se hai un Dockerfile locale
+    image: p_enc:latest 
+    container_name: my_sqlite_app
+    restart: always
+    environment:
+      - DATABASE_URL=./db.sqlite
+      - NODE_ENV=production
+    volumes:
+      # Mappiamo la cartella data per rendere il database persistente
+      - ./data:./
+    networks:
+      - proxy
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.myapp.rule=Host(`${MY_DOMAIN}`)"
+      - "traefik.http.routers.myapp.entrypoints=websecure"
+      - "traefik.http.routers.myapp.tls.certresolver=myresolver"
+
+networks:
+  proxy:
+    external: true

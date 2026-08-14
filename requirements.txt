@@ -1,0 +1,13 @@
+# Runtime dependencies for Protection Data.
+# Python 3.10 or newer is required.
+
+Django==5.2.11
+cryptography==50.0.0
+python-dotenv==1.2.2
+django-ratelimit==4.1.0
+
+# Legacy encrypted-field dependency used by the current `fernet_fields` import.
+# Migrate to a maintained Django 5.2-compatible implementation when the model
+# layer is updated, then remove the compatibility shims from the project.
+django-fernet-fields==0.6
+python-baseconv==1.2.2
