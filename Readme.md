@@ -66,7 +66,7 @@ Fernet provides authenticated symmetric encryption: confidentiality and tamper d
 
 ```bash
 git clone <your-repository-url>
-cd encryption_data_main
+cd data-encryption
 ```
 
 ### 2. Create and activate a virtual environment
