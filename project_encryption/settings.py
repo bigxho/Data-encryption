@@ -47,7 +47,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-#SECRET_KEY = 'django-insecure-*=5kjct=os+_9&tog5s*#5o2enmd(#fw#x1b*7q8($b8l27x6('
+#SECRET_KEY = '1234567890){}('
 
 # SECURITY WARNING: don't run with debug turned on in production!
 #DEBUG = True
@@ -81,13 +81,13 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = 'pro_enc.urls'
+ROOT_URLCONF = 'project_encrytion.urls'
 
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [os.path.join(BASE_DIR, 'templates'),
-                 os.path.join(BASE_DIR, 'paz_enc/templates'),
+                 os.path.join(BASE_DIR, 'patient_encryption/templates'),
                  ],
         'APP_DIRS': True,
         'OPTIONS': {
@@ -100,7 +100,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'pro_enc.wsgi.application'
+WSGI_APPLICATION = 'project_encryption.wsgi.application'
 #MFA_SITE_TITLE = "La Tua Fortezza Digitale"
 
 # Database
