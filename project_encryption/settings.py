@@ -81,7 +81,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = 'project_encrytion.urls'
+ROOT_URLCONF = 'project_encryption.urls'
 
 TEMPLATES = [
     {
