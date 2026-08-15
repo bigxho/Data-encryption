@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.urls import path, include
 from django.contrib.auth import views as auth_views
-from paz_enc.views import SafeLoginView # La nostra vista con Rate Limit
+from patient_encryption.views import SafeLoginView # La nostra vista con Rate Limit
 
 urlpatterns = [
     # Area Amministrativa
