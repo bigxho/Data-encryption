@@ -15,5 +15,5 @@ urlpatterns = [
     # Gestisce automaticamente: /mfa/register, /mfa/authenticate, ecc.
     #path('mfa/', include('mfa.urls')),
     # Rotte dell'Applicazione Documenti
-    path('', include('patient_ecryption.urls')),
+    path('', include('patient_encryption.urls')),
 ]
